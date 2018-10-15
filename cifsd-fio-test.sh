@@ -102,12 +102,11 @@ function main
 		_NRFILES=1024
 		echo "#files $_NRFILES"
 
-		MNT_POINT=${MOUNT_POINT} \
-			BLOCK_SIZE=4 \
-			SIZE=${FILE_SIZE} \
-			NUMJOBS=$i \
-			FIO_LOOPS=$FIO_LOOPS \
-			$PERF stat -o $LOG-perf-stat \
+		MNT_POINT=${MOUNT_POINT}			\
+			SIZE=${FILE_SIZE}			\
+			NUMJOBS=$i				\
+			FIO_LOOPS=$FIO_LOOPS			\
+			$PERF stat -o $LOG-perf-stat		\
 			$FIO ./$FIO_TEMPLATE >> $LOG
 
 		echo -n "perfstat jobs$i" >> $LOG

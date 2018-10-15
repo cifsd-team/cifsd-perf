@@ -1,5 +1,4 @@
 [global]
-bs=${BLOCK_SIZE}k
 ioengine=sync
 direct=0
 size=${SIZE}
