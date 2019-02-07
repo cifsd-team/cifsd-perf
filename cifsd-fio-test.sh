@@ -75,6 +75,10 @@ function main
 		MAX_ITER=10
 	fi
 
+	if [ "z$MIN_ITER" == "z" ]; then
+		MIN_ITER=1
+	fi
+
 	if [ "z$FIO_LOOPS" == "z" ]; then
 		FIO_LOOPS=1
 	fi
@@ -86,11 +90,12 @@ function main
 	FIO_TEMPLATE=./conf/fio-template-static-buffer
 	echo "Using $FIO_TEMPLATE fio template"
 
-	for i in `seq $MAX_ITER`; do
+	for i in `seq $MIN_ITER $MAX_ITER`; do
 		echo $i
 
 		reset_cifsd
 		create_cifsd
+
 		if [ $? != 0 ]; then
 			echo "Unable to init cifsd"
 			exit 1
