@@ -26,7 +26,7 @@ FIO="fio"
 
 function reset_cifsd
 {
-	sudo umount ${MOUNT_POINT}
+	sudo umount "$MOUNT_POINT"
 	sudo killall lt-cifsd
 	killall cifsd
 	sleep 1s
@@ -50,7 +50,7 @@ function create_cifsd
 	fi
 
 	sleep 1s
-	sudo mount -o username=${USER_NAME},password=${USER_PASSWORD},uid=${USER_UID},gid=${USER_GID} -t cifs ${NET_SHARE} ${MOUNT_POINT}
+	sudo mount -o username="$USER_NAME",password="$USER_PASSWORD",uid="$USER_UID",gid="$USER_GID" -t cifs "$NET_SHARE" "$MOUNT_POINT"
 	if [ $? -ne 0 ]; then
 		ec "ERROR: CANNOT MOUNT NETSHARE"
 		exit 1
@@ -69,7 +69,7 @@ function main
 		LOG_SUFFIX="UNSET"
 	fi
 
-	LOG=$LOG-$LOG_SUFFIX
+	LOG="$LOG"-"$LOG_SUFFIX"
 
 	if [ "z$MAX_ITER" == "z" ]; then
 		MAX_ITER=10
@@ -90,7 +90,7 @@ function main
 	FIO_TEMPLATE=./conf/fio-template-static-buffer
 	echo "Using $FIO_TEMPLATE fio template"
 
-	for i in `seq $MIN_ITER $MAX_ITER`; do
+	for i in `seq "$MIN_ITER" "$MAX_ITER"`; do
 		echo $i
 
 		reset_cifsd
@@ -107,18 +107,18 @@ function main
 		_NRFILES=1024
 		echo "#files $_NRFILES"
 
-		MNT_POINT=${MOUNT_POINT}			\
-			SIZE=${FILE_SIZE}			\
-			NUMJOBS=$i				\
-			FIO_LOOPS=$FIO_LOOPS			\
-			$PERF stat -o $LOG-perf-stat		\
-			$FIO ./$FIO_TEMPLATE >> $LOG
+		MNT_POINT="$MOUNT_POINT"			\
+			SIZE="$FILE_SIZE"			\
+			NUMJOBS="$i"				\
+			FIO_LOOPS="$FIO_LOOPS"			\
+			"$PERF" stat -o "$LOG"-perf-stat	\
+			"$FIO" ./"$FIO_TEMPLATE" >> "$LOG"
 
-		echo -n "perfstat jobs$i" >> $LOG
-		cat $LOG-perf-stat >> $LOG
+		echo -n "perfstat jobs$i" >> "$LOG"
+		cat "$LOG"-perf-stat >> "$LOG"
 	done
 
-	rm $LOG-perf-stat
+	rm "$LOG"-perf-stat
 	echo -n "Log files created: $LOG "
 
 	echo
