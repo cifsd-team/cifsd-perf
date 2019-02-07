@@ -90,11 +90,13 @@ function main
 	FIO_TEMPLATE=./conf/fio-template-static-buffer
 	echo "Using $FIO_TEMPLATE fio template"
 
-	for i in `seq "$MIN_ITER" "$MAX_ITER"`; do
+	for i in $(seq "$MIN_ITER" "$MAX_ITER"); do
 		echo $i
 
 		reset_cifsd
 		create_cifsd
+
+		sleep 2s
 
 		if [ $? != 0 ]; then
 			echo "Unable to init cifsd"
