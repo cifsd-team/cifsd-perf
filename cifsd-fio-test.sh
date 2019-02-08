@@ -50,7 +50,15 @@ function create_cifsd
 	fi
 
 	sleep 1s
-	sudo mount -o username="$USER_NAME",password="$USER_PASSWORD",uid="$USER_UID",gid="$USER_GID" -t cifs "$NET_SHARE" "$MOUNT_POINT"
+
+	sudo mount -o username="$USER_NAME",\
+		password="$USER_PASSWORD",\
+		uid="$USER_UID",\
+		gid="$USER_GID" \
+		-t cifs \
+		"$NET_SHARE" \
+		"$MOUNT_POINT"
+
 	if [ $? -ne 0 ]; then
 		ec "ERROR: CANNOT MOUNT NETSHARE"
 		exit 1
