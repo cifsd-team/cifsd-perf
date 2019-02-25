@@ -63,7 +63,6 @@ function create_cifsd
 
 function main
 {
-	local j
 	local i
 
 	source ./conf/cifsd.conf
@@ -90,6 +89,11 @@ function main
 		FILE_SIZE="128M"
 	fi
 
+	NOTRACING=""
+	if [ "z$NO_TRACING" != "z" ]; then
+		NOTRACING="yes"
+	fi
+
 	FIO_TEMPLATE=./conf/fio-template-static-buffer
 	echo "Using $FIO_TEMPLATE fio template"
 
@@ -101,7 +105,9 @@ function main
 
 		sleep 2s
 
-		$(sudo ./tracing-on-off.sh on)
+		if [ "z$NOTRACING" == "z" ]; then
+			$(sudo ./tracing-on-off.sh on)
+		fi
 
 		if [ $? != 0 ]; then
 			echo "Unable to init cifsd"
@@ -121,7 +127,10 @@ function main
 			"$PERF" stat -o "$LOG"-perf-stat	\
 			"$FIO" ./"$FIO_TEMPLATE" >> "$LOG"
 
-		$(sudo ./tracing-on-off.sh off)
+		if [ "z$NOTRACING" == "z" ]; then
+			$(sudo ./tracing-on-off.sh off)
+		fi
+
 		echo -n "perfstat jobs$i" >> "$LOG"
 		cat "$LOG"-perf-stat >> "$LOG"
 	done
