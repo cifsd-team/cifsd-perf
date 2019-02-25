@@ -36,31 +36,26 @@ function reset_cifsd
 function create_cifsd
 {
 	local NET_SHARE="//${HOST}/${SHARE_NAME}"
+	local ret
 
-	sudo modprobe cifsd
-	if [ $? -ne 0 ]; then
-		ec "ERROR: CANNOT MODPROBE CIFSD"
+	ret=$(sudo modprobe cifsd)
+	if [ "z$ret" != "z" ]; then
+		echo "ERROR: CANNOT MODPROBE CIFSD"
 		exit 1
 	fi
 
-	cifsd
-	if [ $? -ne 0 ]; then
-		ec "ERROR: CANNOT START USER-SPACE DAEMON"
+	ret=$(cifsd)
+	if [ "z$ret" != "z" ]; then
+		echo "ERROR: CANNOT START USER-SPACE DAEMON"
 		exit 1
 	fi
 
 	sleep 1s
 
-	sudo mount -o username="$USER_NAME",\
-		password="$USER_PASSWORD",\
-		uid="$USER_UID",\
-		gid="$USER_GID" \
-		-t cifs \
-		"$NET_SHARE" \
-		"$MOUNT_POINT"
+	ret=$(sudo mount -o username=$USER_NAME,password=$USER_PASSWORD,uid=$USER_UID,gid=$USER_GID -t cifs $NET_SHARE $MOUNT_POINT)
 
-	if [ $? -ne 0 ]; then
-		ec "ERROR: CANNOT MOUNT NETSHARE"
+	if [ "z$ret" != "z" ]; then
+		echo "ERROR: CANNOT MOUNT NETSHARE"
 		exit 1
 	fi
 	return 0
@@ -106,6 +101,8 @@ function main
 
 		sleep 2s
 
+		$(sudo ./tracing-on-off.sh on)
+
 		if [ $? != 0 ]; then
 			echo "Unable to init cifsd"
 			exit 1
@@ -124,6 +121,7 @@ function main
 			"$PERF" stat -o "$LOG"-perf-stat	\
 			"$FIO" ./"$FIO_TEMPLATE" >> "$LOG"
 
+		$(sudo ./tracing-on-off.sh off)
 		echo -n "perfstat jobs$i" >> "$LOG"
 		cat "$LOG"-perf-stat >> "$LOG"
 	done
