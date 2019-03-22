@@ -12,4 +12,5 @@ else
 	echo 0 > tracing_on
 	LOG="test-fio-trace"-"$2"
 	cat trace >> /tmp/$LOG
+	echo '' > trace
 fi
