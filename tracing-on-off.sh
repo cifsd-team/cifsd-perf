@@ -10,5 +10,7 @@ if [ "z$1" == "zon" ]; then
 	echo 1 > tracing_on
 else
 	echo 0 > tracing_on
-	cat trace >> /tmp/__trace__
+	LOG="test-fio-trace"-"$2"
+	cat trace >> /tmp/$LOG
+	echo '' > trace
 fi

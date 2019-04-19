@@ -128,7 +128,8 @@ function main
 			"$FIO" ./"$FIO_TEMPLATE" >> "$LOG"
 
 		if [ "z$NOTRACING" == "z" ]; then
-			$(sudo ./tracing-on-off.sh off)
+			TRACE_NAME="jobs$i-$LOG_SUFFIX"
+			$(sudo ./tracing-on-off.sh off $TRACE_NAME)
 		fi
 
 		echo -n "perfstat jobs$i" >> "$LOG"
